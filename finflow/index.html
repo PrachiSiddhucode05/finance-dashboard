@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Finance Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="sb-logo-text">Dashboard</div>
+      <span class="sb-logo-sub">Finance Dashboard</span>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Navigation</div>
+    <div class="sb-item active" data-tab="dashboard" onclick="switchTab('dashboard',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="sb-item" data-tab="transactions" onclick="switchTab('transactions',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Transactions
+    </div>
+    <div class="sb-item" data-tab="insights" onclick="switchTab('insights',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Insights
+    </div>
+  </div>
+
+  <div class="sb-bottom">
+    <span class="role-label-txt">Switch Role</span>
+    <select class="role-select" id="roleSelect" onchange="switchRole(this.value)">
+      <option value="viewer">Viewer</option>
+      <option value="admin">Admin</option>
+    </select>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <button class="menu-btn" onclick="toggleSB()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="topbar-title">Overview <span id="dateLabel"></span></div>
+    <div class="search-box">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Search transactions…" oninput="filterTx()">
+    </div>
+    <span class="role-badge" id="roleBadge">Viewer</span>
+  </header>
+
+  <div class="content">
+    <!-- TABS -->
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard',this)">Dashboard</button>
+      <button class="tab-btn" data-tab="transactions" onclick="switchTab('transactions',this)">Transactions</button>
+      <button class="tab-btn" data-tab="insights" onclick="switchTab('insights',this)">Insights</button>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div class="tab-pane active" id="tab-dashboard">
+      <div class="cards-grid">
+        <div class="scard hero">
+          <div class="scard-blob" style="background:#fff"></div>
+          <div class="scard-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="scard-label">Total Balance</div>
+          <div class="scard-value" id="cBalance">₹0</div>
+          <div class="scard-delta" id="cBalDelta" style="color:rgba(255,255,255,.75)">—</div>
+        </div>
+        <div class="scard">
+          <div class="scard-blob" style="background:#16a34a"></div>
+          <div class="scard-icon" style="background:#dcfce7">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div class="scard-label">Total Income</div>
+          <div class="scard-value" id="cIncome">₹0</div>
+          <div class="scard-delta delta-up" id="cIncDelta">—</div>
+        </div>
+        <div class="scard">
+          <div class="scard-blob" style="background:#ef4444"></div>
+          <div class="scard-icon" style="background:#fee2e2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+          </div>
+          <div class="scard-label">Total Expenses</div>
+          <div class="scard-value" id="cExpense">₹0</div>
+          <div class="scard-delta delta-dn" id="cExpDelta">—</div>
+        </div>
+        <div class="scard">
+          <div class="scard-blob" style="background:#8b5cf6"></div>
+          <div class="scard-icon" style="background:#ede9fe">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2.2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          </div>
+          <div class="scard-label">Net Savings</div>
+          <div class="scard-value" id="cSavings">₹0</div>
+          <div class="scard-delta" id="cSavDelta">—</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="cc-head">
+            <div><div class="cc-title">Income vs Expenses</div><div class="cc-sub">Monthly trend — last 6 months</div></div>
+            <span class="cc-badge">6 Months</span>
+          </div>
+          <div class="chart-canvas-wrap" style="height:240px">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-head">
+            <div><div class="cc-title">Spending Breakdown</div><div class="cc-sub">By category</div></div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:240px">
+            <canvas id="donutChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="cc-head">
+          <div><div class="cc-title">Recent Transactions</div><div class="cc-sub">Last 5 activities</div></div>
+          <button onclick="switchTab('transactions',null)" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--border2);background:var(--grad-soft);color:var(--g1);font-size:12px;font-weight:600;cursor:pointer;font-family:'Poppins',sans-serif;transition:all var(--t)">View All</button>
+        </div>
+        <div id="recentList"></div>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS TAB -->
+    <div class="tab-pane" id="tab-transactions">
+      <div class="tx-bar">
+        <select class="tx-select" id="fType" onchange="filterTx()">
+          <option value="all">All Types</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <select class="tx-select" id="fCat" onchange="filterTx()">
+          <option value="all">All Categories</option>
+        </select>
+        <select class="tx-select" id="fSort" onchange="filterTx()">
+          <option value="date-desc">Newest First</option>
+          <option value="date-asc">Oldest First</option>
+          <option value="amount-desc">Highest Amount</option>
+          <option value="amount-asc">Lowest Amount</option>
+        </select>
+        <button class="add-btn hidden" id="addBtn" onclick="openModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Transaction
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th><th>Description</th><th>Category</th><th>Type</th><th>Amount</th>
+              <th id="actionTh" style="display:none">Action</th>
+            </tr>
+          </thead>
+          <tbody id="txBody"></tbody>
+        </table>
+        <div class="empty-state" id="txEmpty" style="display:none">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p>No transactions match your filters</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSIGHTS TAB -->
+    <div class="tab-pane" id="tab-insights">
+      <div class="insights-grid">
+        <div class="ins-card">
+          <div class="ins-label">Highest Spend Category</div>
+          <div class="ins-value" id="iTopCat">—</div>
+          <div class="ins-desc" id="iTopAmt">—</div>
+        </div>
+        <div class="ins-card">
+          <div class="ins-label">This Month Expense</div>
+          <div class="ins-value" id="iMonth">—</div>
+          <div class="ins-desc" id="iMonthCmp">vs last month</div>
+        </div>
+        <div class="ins-card">
+          <div class="ins-label">Savings Rate</div>
+          <div class="ins-value" id="iSavRate">—</div>
+          <div class="ins-desc" id="iSavDesc">of total income</div>
+        </div>
+      </div>
+
+      <div class="chart-card" style="margin-bottom:22px">
+        <div class="cc-head"><div><div class="cc-title">Spending by Category</div><div class="cc-sub">Expense distribution</div></div></div>
+        <div class="bar-wrap" id="spendBars"></div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="cc-head">
+            <div><div class="cc-title">Monthly Comparison</div><div class="cc-sub">Income vs Expenses</div></div>
+            <span class="cc-badge">6M</span>
+          </div>
+          <div class="chart-canvas-wrap" style="height:240px">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="cc-head">
+            <div><div class="cc-title">Income Sources</div><div class="cc-sub">By category</div></div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:240px">
+            <canvas id="incChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Add Transaction</div>
+      <div class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Type</label>
+        <select class="form-select" id="mType"><option value="income">Income</option><option value="expense">Expense</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Amount (₹)</label>
+        <input class="form-input" type="number" id="mAmt" placeholder="0.00" min="1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <input class="form-input" type="text" id="mDesc" placeholder="e.g. Monthly salary, Grocery…">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="mCat">
+          <option value="food">Food</option><option value="transport">Transport</option>
+          <option value="shopping">Shopping</option><option value="entertainment">Entertainment</option>
+          <option value="health">Health</option><option value="salary">Salary</option>
+          <option value="freelance">Freelance</option><option value="investment">Investment</option>
+          <option value="utilities">Utilities</option><option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input class="form-input" type="date" id="mDate">
+      </div>
+    </div>
+    <button class="submit-btn" onclick="addTx()">Add Transaction</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
